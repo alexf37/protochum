@@ -10,11 +10,33 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
-model Post {
-    id        Int      @id @default(autoincrement())
-    name      String
+model User {
+    id        String   @id @default(cuid())
     createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    email     String   @unique
+    phone     String?  @unique
+    name      String?  
+    responses Response[]
+}
 
-    @@index([name])
+// can be MCQ or FRQ
+model Question {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+    index     Int      
+    type      String
+    question  String
+    responses Response[]
+}
+
+model Response {
+    id          String   @id @default(cuid())
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+    user        User     @relation(fields: [userId], references: [id])
+    userId      String
+    question    Question @relation(fields: [questionId], references: [id])
+    questionId  String
+    response    String
+    elaboration String?
 }
