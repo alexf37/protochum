@@ -6,15 +6,49 @@ export default async function Survey() {
     <>
       <div className="flex max-w-96 flex-col gap-2 rounded-2xl bg-white p-8 text-black shadow-md">
         <h2 className="text-2xl font-bold">Question 1</h2>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit?</p>
+        <p className="pb-2 font-sans">
+          Lorem ipsum dolor sit amet consectetur adipisicing elit?
+        </p>
         <RadioGroup defaultValue="option-one">
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="option-one" id="option-one" />
-            <Label htmlFor="option-one">Option One</Label>
+          <div className="flex items-center gap-2">
+            <RadioGroupItem
+              value="option-one"
+              id="option-one"
+              className="border-slate-400"
+            />
+            <Label className="text-base" htmlFor="option-one">
+              Lorem ipsum
+            </Label>
           </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="option-two" id="option-two" />
-            <Label htmlFor="option-two">Option Two</Label>
+          <div className="flex items-center gap-2">
+            <RadioGroupItem
+              value="option-two"
+              id="option-two"
+              className="border-slate-400"
+            />
+            <Label className="text-base" htmlFor="option-two">
+              Dolor sit
+            </Label>
+          </div>
+          <div className="flex items-center gap-2">
+            <RadioGroupItem
+              value="option-three"
+              id="option-three"
+              className="border-slate-400"
+            />
+            <Label className="text-base" htmlFor="option-three">
+              Amet consectetur
+            </Label>
+          </div>
+          <div className="flex items-center gap-2">
+            <RadioGroupItem
+              value="option-four"
+              id="option-four"
+              className="border-slate-400"
+            />
+            <Label className="text-base" htmlFor="option-four">
+              Adipisicing elit
+            </Label>
           </div>
         </RadioGroup>
       </div>
