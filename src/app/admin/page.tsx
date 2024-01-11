@@ -11,6 +11,14 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
 import { api } from "@/trpc/server";
 
 export default async function Admin() {
@@ -46,7 +54,7 @@ export default async function Admin() {
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
-                <DialogTitle>Add Question</DialogTitle>
+                <DialogTitle className="text-xl">Add Question</DialogTitle>
                 <DialogDescription>
                   New questions will be added to the end of the survey. Click
                   save when you're done.
@@ -75,15 +83,16 @@ export default async function Admin() {
                       />
                     </div>
                     <div className="row-auto grid grid-cols-4 items-center gap-4">
-                      <Label htmlFor="username" className="text-right">
-                        Username
+                      <Label htmlFor="option" className="text-right">
+                        Option 1
                       </Label>
                       <Input
-                        id="username"
+                        id="option"
                         placeholder="Option"
                         className="col-span-3"
                       />
                     </div>
+
                     <div className="row-auto grid grid-cols-4 items-center gap-4">
                       <Button
                         variant="outline"
@@ -93,7 +102,24 @@ export default async function Admin() {
                       </Button>
                     </div>
                   </div>
-                  <DialogFooter>
+                  <div className="row-auto grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="other" className="text-right leading-4">
+                      Include "Other"
+                    </Label>
+                    <Select>
+                      <SelectTrigger className="col-span-3">
+                        <SelectValue
+                          defaultValue={"no"}
+                          placeholder="❌ No (default)"
+                        />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="yes">✅ Yes</SelectItem>
+                        <SelectItem value="no">❌ No</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <DialogFooter className="pt-4">
                     <Button type="submit">Save changes</Button>
                   </DialogFooter>
                 </TabsContent>
