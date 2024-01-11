@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/select";
 
 import { api } from "@/trpc/server";
+import React from "react";
 
 const colours = [
   "Red",
@@ -30,6 +31,106 @@ const colours = [
   "Indigo",
   "Violet",
 ];
+
+function AddQuestionDialog({ children }: React.PropsWithChildren) {
+  return (
+    <Dialog>
+      <DialogTrigger asChild>{children}</DialogTrigger>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle className="text-xl">Add Question</DialogTitle>
+          <DialogDescription>
+            New questions will be added to the end of the survey. Click save
+            when you're done.
+          </DialogDescription>
+        </DialogHeader>
+        <Tabs defaultValue="mcq">
+          <TabsList className="w-full">
+            <TabsTrigger className="w-full" value="mcq">
+              Multiple Choice
+            </TabsTrigger>
+            <TabsTrigger className="w-full" value="frq">
+              Free Response
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="mcq" className="space-y-2">
+            <div className="grid gap-4 py-2">
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="name" className="text-right">
+                  Prompt
+                </Label>
+                <Input
+                  id="prompt"
+                  placeholder="What's your favorite color?"
+                  className="col-span-3"
+                />
+              </div>
+              <div className="row-auto grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="option" className="text-right">
+                  Option 1
+                </Label>
+                <Input
+                  id="option"
+                  placeholder={
+                    colours[Math.floor(Math.random() * colours.length)]
+                  }
+                  className="col-span-3"
+                />
+              </div>
+
+              <div className="row-auto grid grid-cols-4 items-center gap-4">
+                <Button
+                  variant="outline"
+                  className="col-span-3 col-start-2 justify-start text-slate-400"
+                >
+                  + Add option
+                </Button>
+              </div>
+            </div>
+            <div className="row-auto grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="other" className="text-right leading-4">
+                Include "Other"
+              </Label>
+              <Select>
+                <SelectTrigger className="col-span-3">
+                  <SelectValue
+                    defaultValue={"no"}
+                    placeholder="❌ No (default)"
+                  />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="yes">✅ Yes</SelectItem>
+                  <SelectItem value="no">❌ No</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <DialogFooter className="pt-4">
+              <Button type="submit">Save Question</Button>
+            </DialogFooter>
+          </TabsContent>
+          <TabsContent value="frq">
+            <div className="grid gap-4 py-2">
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="name" className="text-right">
+                  Prompt
+                </Label>
+                <Input
+                  id="prompt"
+                  placeholder="What's your mother's maiden name?"
+                  className="col-span-3"
+                />
+              </div>
+            </div>
+            <DialogFooter className="pt-4">
+              <Button type="submit">Save Question</Button>
+            </DialogFooter>
+          </TabsContent>
+        </Tabs>
+      </DialogContent>
+    </Dialog>
+  );
+}
 
 export default async function Admin() {
   const questions = await api.survey.getQuestions.query();
@@ -58,103 +159,9 @@ export default async function Admin() {
           )}
         </div>
         <div className="flex justify-center pt-2">
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button>+ Add Question</Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
-              <DialogHeader>
-                <DialogTitle className="text-xl">Add Question</DialogTitle>
-                <DialogDescription>
-                  New questions will be added to the end of the survey. Click
-                  save when you're done.
-                </DialogDescription>
-              </DialogHeader>
-              <Tabs defaultValue="mcq">
-                <TabsList className="w-full">
-                  <TabsTrigger className="w-full" value="mcq">
-                    Multiple Choice
-                  </TabsTrigger>
-                  <TabsTrigger className="w-full" value="frq">
-                    Free Response
-                  </TabsTrigger>
-                </TabsList>
-
-                <TabsContent value="mcq" className="space-y-2">
-                  <div className="grid gap-4 py-2">
-                    <div className="grid grid-cols-4 items-center gap-4">
-                      <Label htmlFor="name" className="text-right">
-                        Prompt
-                      </Label>
-                      <Input
-                        id="prompt"
-                        placeholder="What's your favorite color?"
-                        className="col-span-3"
-                      />
-                    </div>
-                    <div className="row-auto grid grid-cols-4 items-center gap-4">
-                      <Label htmlFor="option" className="text-right">
-                        Option 1
-                      </Label>
-                      <Input
-                        id="option"
-                        placeholder={
-                          colours[Math.floor(Math.random() * colours.length)]
-                        }
-                        className="col-span-3"
-                      />
-                    </div>
-
-                    <div className="row-auto grid grid-cols-4 items-center gap-4">
-                      <Button
-                        variant="outline"
-                        className="col-span-3 col-start-2 justify-start text-slate-400"
-                      >
-                        + Add option
-                      </Button>
-                    </div>
-                  </div>
-                  <div className="row-auto grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="other" className="text-right leading-4">
-                      Include "Other"
-                    </Label>
-                    <Select>
-                      <SelectTrigger className="col-span-3">
-                        <SelectValue
-                          defaultValue={"no"}
-                          placeholder="❌ No (default)"
-                        />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="yes">✅ Yes</SelectItem>
-                        <SelectItem value="no">❌ No</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <DialogFooter className="pt-4">
-                    <Button type="submit">Save Question</Button>
-                  </DialogFooter>
-                </TabsContent>
-                <TabsContent value="frq">
-                  <div className="grid gap-4 py-2">
-                    <div className="grid grid-cols-4 items-center gap-4">
-                      <Label htmlFor="name" className="text-right">
-                        Prompt
-                      </Label>
-                      <Input
-                        id="prompt"
-                        placeholder="What's your mother's maiden name?"
-                        className="col-span-3"
-                      />
-                    </div>
-                  </div>
-                  <DialogFooter className="pt-4">
-                    <Button type="submit">Save Question</Button>
-                  </DialogFooter>
-                </TabsContent>
-              </Tabs>
-            </DialogContent>
-          </Dialog>
+          <AddQuestionDialog>
+            <Button>+ Add Question</Button>
+          </AddQuestionDialog>
         </div>
       </div>
     </>
