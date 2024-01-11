@@ -10,4 +10,8 @@ export const surveyRouter = createTRPCRouter({
         greeting: `Hello ${input.text}`,
       };
     }),
+  getQuestions: publicProcedure.query(async ({ ctx }) => {
+    const questions = await ctx.db.question.findMany();
+    return questions;
+  }),
 });

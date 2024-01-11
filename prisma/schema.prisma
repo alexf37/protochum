@@ -11,32 +11,41 @@ datasource db {
 }
 
 model User {
-    id        String   @id @default(cuid())
-    createdAt DateTime @default(now())
-    email     String   @unique
-    phone     String?  @unique
-    name      String?  
+    id        String     @id @default(cuid())
+    createdAt DateTime   @default(now())
+    email     String     @unique
+    phone     String?    @unique
+    name      String?
     responses Response[]
 }
 
-// can be MCQ or FRQ
 model Question {
-    id        String   @id @default(cuid())
-    createdAt DateTime @default(now())
-    index     Int      
-    type      String
-    question  String
-    responses Response[]
+    id            String         @id @default(cuid())
+    createdAt     DateTime       @default(now())
+    index         Int
+    type          String // MCQ or FRQ
+    content       String
+    responses     Response[]
+    answerChoices AnswerChoice[]
+}
+
+model AnswerChoice {
+    id         String   @id @default(cuid())
+    createdAt  DateTime @default(now())
+    index      Int?
+    content    String
+    question   Question @relation(fields: [questionId], references: [id])
+    questionId String
 }
 
 model Response {
-    id          String   @id @default(cuid())
-    createdAt   DateTime @default(now())
-    updatedAt   DateTime @updatedAt
-    user        User     @relation(fields: [userId], references: [id])
-    userId      String
-    question    Question @relation(fields: [questionId], references: [id])
-    questionId  String
-    response    String
-    elaboration String?
+    id           String   @id @default(cuid())
+    createdAt    DateTime @default(now())
+    updatedAt    DateTime @updatedAt
+    user         User     @relation(fields: [userId], references: [id])
+    userId       String
+    question     Question @relation(fields: [questionId], references: [id])
+    questionId   String
+    answerChoice String?
+    textContent  String?
 }
