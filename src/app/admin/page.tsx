@@ -21,6 +21,16 @@ import {
 
 import { api } from "@/trpc/server";
 
+const colours = [
+  "Red",
+  "Orange",
+  "Yellow",
+  "Green",
+  "Blue",
+  "Indigo",
+  "Violet",
+];
+
 export default async function Admin() {
   const questions = await api.survey.getQuestions.query();
   return (
@@ -88,7 +98,9 @@ export default async function Admin() {
                       </Label>
                       <Input
                         id="option"
-                        placeholder="Option"
+                        placeholder={
+                          colours[Math.floor(Math.random() * colours.length)]
+                        }
                         className="col-span-3"
                       />
                     </div>
@@ -120,11 +132,25 @@ export default async function Admin() {
                     </Select>
                   </div>
                   <DialogFooter className="pt-4">
-                    <Button type="submit">Save changes</Button>
+                    <Button type="submit">Save Question</Button>
                   </DialogFooter>
                 </TabsContent>
                 <TabsContent value="frq">
-                  <div className="grid place-content-center p-4">TBD</div>
+                  <div className="grid gap-4 py-2">
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="name" className="text-right">
+                        Prompt
+                      </Label>
+                      <Input
+                        id="prompt"
+                        placeholder="What's your mother's maiden name?"
+                        className="col-span-3"
+                      />
+                    </div>
+                  </div>
+                  <DialogFooter className="pt-4">
+                    <Button type="submit">Save Question</Button>
+                  </DialogFooter>
                 </TabsContent>
               </Tabs>
             </DialogContent>
