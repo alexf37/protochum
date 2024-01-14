@@ -3,7 +3,7 @@ import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
 
 export const adminRouter = createTRPCRouter({
-  addQuestion: publicProcedure
+  addQuestionWithAnswerChoices: publicProcedure
     .input(
       z.discriminatedUnion("type", [
         z.object({
@@ -11,6 +11,12 @@ export const adminRouter = createTRPCRouter({
           prompt: z.string(),
           options: z.array(z.string()),
           includeOther: z.boolean(),
+          answerChoices: z.array(
+            z.object({
+              content: z.string(),
+              requireElaboration: z.boolean(),
+            }),
+          )
         }),
         z.object({
           type: z.literal("frq"),
@@ -27,6 +33,30 @@ export const adminRouter = createTRPCRouter({
           index: 1,
         },
       });
-      return createdQuestion;
+      const questionId = createdQuestion.id;
+      const answerChoices = await ctx.db.answerChoice.createMany({
+        data: [
+          {
+            questionId,
+            content: "Choice A",
+          },
+          {
+            questionId,
+            content: "Choice B",
+          },
+          {
+            questionId,
+            content: "Choice C",
+          },
+          {
+            questionId,
+            content: "Choice D",
+          },
+        ],
+      });
+      return {
+        question: createdQuestion,
+        answerChoices
+      };
     }),
 });

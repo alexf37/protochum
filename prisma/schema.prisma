@@ -10,15 +10,6 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
-model User {
-    id        String     @id @default(cuid())
-    createdAt DateTime   @default(now())
-    email     String     @unique
-    phone     String?    @unique
-    name      String?
-    responses Response[]
-}
-
 model Question {
     id            String         @id @default(cuid())
     createdAt     DateTime       @default(now())
@@ -30,22 +21,69 @@ model Question {
 }
 
 model AnswerChoice {
-    id         String   @id @default(cuid())
-    createdAt  DateTime @default(now())
+    id         String     @id @default(cuid())
+    createdAt  DateTime   @default(now())
     index      Int?
     content    String
-    question   Question @relation(fields: [questionId], references: [id])
+    question   Question   @relation(fields: [questionId], references: [id])
     questionId String
+    responses  Response[]
 }
 
 model Response {
+    id             String        @id @default(cuid())
+    createdAt      DateTime      @default(now())
+    updatedAt      DateTime      @updatedAt
+    user           User          @relation(fields: [userId], references: [id])
+    userId         String
+    question       Question      @relation(fields: [questionId], references: [id])
+    questionId     String
+    answerChoice   AnswerChoice? @relation(fields: [answerChoiceId], references: [id])
+    answerChoiceId String?
+    textContent    String?
+}
+
+// Necessary for Next auth
+model Account {
+    id                String  @id @default(cuid())
+    userId            String
+    type              String
+    provider          String
+    providerAccountId String
+    refresh_token     String? // @db.Text
+    access_token      String? // @db.Text
+    expires_at        Int?
+    token_type        String?
+    scope             String?
+    id_token          String? // @db.Text
+    session_state     String?
+    user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@unique([provider, providerAccountId])
+}
+
+model Session {
     id           String   @id @default(cuid())
-    createdAt    DateTime @default(now())
-    updatedAt    DateTime @updatedAt
-    user         User     @relation(fields: [userId], references: [id])
+    sessionToken String   @unique
     userId       String
-    question     Question @relation(fields: [questionId], references: [id])
-    questionId   String
-    answerChoice String?
-    textContent  String?
+    expires      DateTime
+    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+    id        String     @id @default(cuid())
+    email     String     @unique
+    phone     String?    @unique
+    name      String?
+    accounts  Account[]
+    sessions  Session[]
+    responses Response[]
+}
+
+model VerificationToken {
+    identifier String
+    token      String   @unique
+    expires    DateTime
+
+    @@unique([identifier, token])
 }
