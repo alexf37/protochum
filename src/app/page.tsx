@@ -74,7 +74,7 @@ export default async function Home() {
       </h1>
       <div className="flex gap-4">
         <Link
-          href="#calendly"
+          href="https://calendly.com/chum-network/convo"
           className="group flex items-center gap-2 rounded-full border-2 border-indigo-400 bg-indigo-500 px-5 py-3 text-xl font-semibold drop-shadow"
         >
           Calendly
