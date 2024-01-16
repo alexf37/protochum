@@ -151,37 +151,53 @@ function AddQuestionDialog({ children }: React.PropsWithChildren) {
   );
 }
 
+function LoginCard() {
+  return (
+    <Card className="max-w-sm p-6">
+      <CardHeader>
+        <CardTitle className="text-center text-2xl font-bold tracking-wide">
+          Administrator Login
+        </CardTitle>
+        <CardDescription className="text-center">
+          You must be a Chum administrator to access this page.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="flex justify-center">
+        <LoginForm />
+      </CardContent>
+    </Card>
+  );
+}
+
+function NotAuthorizedCard() {
+  return (
+    <Card className="max-w-sm p-6">
+      <CardHeader>
+        <CardTitle className="text-center text-2xl font-bold tracking-wide">
+          Not Authorized
+        </CardTitle>
+        <CardDescription className="text-center">
+          Make sure to log in with your company Google account. If not given a
+          choice, clear your cookies or try another browser.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="flex justify-center gap-2">
+        <Link href={"/"} passHref>
+          <Button>Home</Button>
+        </Link>
+        <LogoutButton variant={"destructive"} />
+      </CardContent>
+    </Card>
+  );
+}
+
 export default async function Admin() {
   const session = await getServerAuthSession();
   if (!session?.user) {
-    return (
-      <Card className="max-w-sm p-6">
-        <CardHeader>
-          <CardTitle className="text-center text-2xl font-bold tracking-wide">
-            Administrator Login
-          </CardTitle>
-          <CardDescription className="text-center">
-            You must be a Chum administrator to access this page.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="flex justify-center">
-          <LoginForm />
-        </CardContent>
-      </Card>
-    );
+    return <LoginCard />;
   }
   if (!session.user.email?.endsWith("@sinandex.com")) {
-    return (
-      <div className="flex flex-col items-center gap-2 text-foreground">
-        <p>Not authorized</p>
-        <Link href={"/"} passHref>
-          <Button variant={"outline"} className="text-foreground">
-            Home
-          </Button>
-        </Link>
-        <LogoutButton />
-      </div>
-    );
+    return <NotAuthorizedCard />;
   }
   const questions = await api.survey.getQuestions.query();
   return (
@@ -194,7 +210,7 @@ export default async function Admin() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[100px]">Index</TableHead>
+              <TableHead>Index</TableHead>
               <TableHead>Type</TableHead>
               <TableHead>Question</TableHead>
               <TableHead className="text-right">Options</TableHead>
