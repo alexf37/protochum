@@ -1,57 +1,90 @@
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+"use client";
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 
-export default async function Survey() {
+const formSchema = z.object({
+  name: z.string().min(1, {
+    message: "Name must be at least 1 character.",
+  }),
+  email: z.string().email({
+    message: "Please enter a valid email address.",
+  }),
+});
+
+export default function Survey() {
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+    },
+  });
+
+  function onSubmit(values: z.infer<typeof formSchema>) {
+    // Do something with the form values.
+    console.log(values);
+  }
+
   return (
     <>
-      <div className="flex max-w-96 flex-col gap-2 rounded-2xl bg-white p-8 text-black shadow-md">
-        <h2 className="text-2xl font-bold">Question 1</h2>
-        <p className="pb-2 font-sans">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit?
-        </p>
-        <RadioGroup defaultValue="option-one">
-          <div className="flex items-center gap-2">
-            <RadioGroupItem
-              value="option-one"
-              id="option-one"
-              className="border-slate-400"
+      <h2 className="text-2xl font-bold">Survey</h2>
+      <p className="pb-2 font-sans text-slate-600">
+        Please enter your name and email address to begin.
+      </p>
+      <Form {...form}>
+        <form
+          className="flex flex-col gap-2"
+          onSubmit={form.handleSubmit(onSubmit)}
+        >
+          <div className="space-y-2">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Your Name</FormLabel>
+                  <FormControl>
+                    <Input type="text" {...field} />
+                  </FormControl>
+                  <FormDescription />
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-            <Label className="text-base" htmlFor="option-one">
-              Lorem ipsum
-            </Label>
           </div>
-          <div className="flex items-center gap-2">
-            <RadioGroupItem
-              value="option-two"
-              id="option-two"
-              className="border-slate-400"
+          <div className="space-y-2">
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email Address</FormLabel>
+                  <FormControl>
+                    <Input type="email" {...field} />
+                  </FormControl>
+                  <FormDescription />
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-            <Label className="text-base" htmlFor="option-two">
-              Dolor sit
-            </Label>
           </div>
-          <div className="flex items-center gap-2">
-            <RadioGroupItem
-              value="option-three"
-              id="option-three"
-              className="border-slate-400"
-            />
-            <Label className="text-base" htmlFor="option-three">
-              Amet consectetur
-            </Label>
+          <div className="pt-2 text-right">
+            <Button>Start</Button>
           </div>
-          <div className="flex items-center gap-2">
-            <RadioGroupItem
-              value="option-four"
-              id="option-four"
-              className="border-slate-400"
-            />
-            <Label className="text-base" htmlFor="option-four">
-              Adipisicing elit
-            </Label>
-          </div>
-        </RadioGroup>
-      </div>
+        </form>
+      </Form>
     </>
   );
 }
