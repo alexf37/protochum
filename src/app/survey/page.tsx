@@ -17,7 +17,7 @@ import Link from "next/link";
 import { api } from "@/trpc/react";
 import { useRouter } from "next/navigation";
 import { useContext } from "react";
-import { SurveyContext } from "./layout";
+import { SurveyContext } from "./context";
 
 export const formSchema = z.object({
   name: z.string().min(1, {

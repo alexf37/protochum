@@ -3,7 +3,7 @@
 import { useParams, useRouter } from "next/navigation";
 import { api } from "@/trpc/react";
 import { useContext, useState } from "react";
-import { SurveyContext } from "../layout";
+import { SurveyContext } from "../context";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";

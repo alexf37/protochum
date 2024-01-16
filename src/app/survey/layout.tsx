@@ -1,24 +1,7 @@
 "use client";
 
-import { createContext, useState } from "react";
-
-type SurveyContextType = {
-  currentQuestion: number;
-  setCurrentQuestion?: (index: number) => void;
-  email: string;
-  setEmail: (email: string) => void;
-};
-
-export const SurveyContext = createContext<SurveyContextType>({
-  currentQuestion: 0,
-  setCurrentQuestion: () => {
-    return;
-  },
-  email: "",
-  setEmail: () => {
-    return;
-  },
-});
+import { useState } from "react";
+import { SurveyContext } from "./context";
 
 export default function SurveyLayout({
   children,
