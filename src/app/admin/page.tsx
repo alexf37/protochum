@@ -18,9 +18,28 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { LoginForm } from "@/components/LoginForm";
 
 import { api } from "@/trpc/server";
 import React from "react";
+import { getServerAuthSession } from "@/server/auth";
+import { LogoutButton } from "@/components/LogoutButton";
+import Link from "next/link";
 
 const colours = [
   "Red",
@@ -133,6 +152,37 @@ function AddQuestionDialog({ children }: React.PropsWithChildren) {
 }
 
 export default async function Admin() {
+  const session = await getServerAuthSession();
+  if (!session?.user) {
+    return (
+      <Card className="max-w-sm p-6">
+        <CardHeader>
+          <CardTitle className="text-center text-2xl font-bold tracking-wide">
+            Administrator Login
+          </CardTitle>
+          <CardDescription className="text-center">
+            You must be a Chum administrator to access this page.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="flex justify-center">
+          <LoginForm />
+        </CardContent>
+      </Card>
+    );
+  }
+  if (!session.user.email?.endsWith("@sinandex.com")) {
+    return (
+      <div className="flex flex-col items-center gap-2 text-foreground">
+        <p>Not authorized</p>
+        <Link href={"/"} passHref>
+          <Button variant={"outline"} className="text-foreground">
+            Home
+          </Button>
+        </Link>
+        <LogoutButton />
+      </div>
+    );
+  }
   const questions = await api.survey.getQuestions.query();
   return (
     <>
@@ -141,27 +191,45 @@ export default async function Admin() {
         <p className="pb-2 font-sans text-slate-600">
           View, add, and edit questions.
         </p>
-        <div className="flex flex-col gap-2">
-          {questions.length === 0 ? (
-            <div className="grid place-content-center">
-              <p className="text-slate-600">
-                You haven't added any questions yet!
-              </p>
-            </div>
-          ) : (
-            questions.map((q) => (
-              <div className="flex items-center gap-2" key={q.id}>
-                <p>{q.content}</p>
-                <button className="border-slate-400">Edit</button>
-                <button className="border-slate-400">Delete</button>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-[100px]">Index</TableHead>
+              <TableHead>Type</TableHead>
+              <TableHead>Question</TableHead>
+              <TableHead className="text-right">Options</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {questions.length === 0 ? (
+              <div className="flex flex-col gap-2">
+                <div className="grid place-content-center">
+                  <p className="text-slate-600">
+                    You haven't added any questions yet!
+                  </p>
+                </div>
               </div>
-            ))
-          )}
-        </div>
-        <div className="flex justify-center pt-2">
+            ) : (
+              questions.map((q) => (
+                <TableRow key={q.id}>
+                  <TableCell className="font-medium">{q.index}</TableCell>
+                  <TableCell>{q.type.toLocaleUpperCase()}</TableCell>
+                  <TableCell>{q.content}</TableCell>
+                  <TableCell className="flex justify-end gap-2">
+                    <Button>Edit</Button>
+                    <Button variant="destructive">Delete</Button>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
+
+        <div className="flex justify-center gap-4 pt-2">
           <AddQuestionDialog>
             <Button>+ Add Question</Button>
           </AddQuestionDialog>
+          <LogoutButton />
         </div>
       </div>
     </>
