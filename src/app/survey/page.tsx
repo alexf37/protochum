@@ -19,7 +19,7 @@ import { useRouter } from "next/navigation";
 import { useContext } from "react";
 import { SurveyContext } from "./context";
 
-export const formSchema = z.object({
+const formSchema = z.object({
   name: z.string().min(1, {
     message: "Name must be at least 1 character.",
   }),
