@@ -21,13 +21,14 @@ model Question {
 }
 
 model AnswerChoice {
-    id         String     @id @default(cuid())
-    createdAt  DateTime   @default(now())
-    index      Int?
-    content    String
-    question   Question   @relation(fields: [questionId], references: [id])
-    questionId String
-    responses  Response[]
+    id                 String     @id @default(cuid())
+    createdAt          DateTime   @default(now())
+    index              Int?
+    content            String
+    requireElaboration Boolean    @default(false)
+    question           Question   @relation(fields: [questionId], references: [id])
+    questionId         String
+    responses          Response[]
 }
 
 model Response {
