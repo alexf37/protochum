@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import Link from "next/link";
 
 const formSchema = z.object({
   name: z.string().min(1, {
@@ -80,7 +81,10 @@ export default function Survey() {
               )}
             />
           </div>
-          <div className="pt-2 text-right">
+          <div className="flex justify-end gap-2 pt-2">
+            <Link href={"/"} passHref>
+              <Button variant="outline">Back</Button>
+            </Link>
             <Button>Start</Button>
           </div>
         </form>
