@@ -6,12 +6,18 @@ type SurveyContextType = {
   currentQuestion: number;
   setCurrentQuestion?: (index: number) => void;
   email: string;
-  setEmail?: (email: string) => void;
+  setEmail: (email: string) => void;
 };
 
-const SurveyContext = createContext<SurveyContextType>({
+export const SurveyContext = createContext<SurveyContextType>({
   currentQuestion: 0,
+  setCurrentQuestion: () => {
+    return;
+  },
   email: "",
+  setEmail: () => {
+    return;
+  },
 });
 
 export default function SurveyLayout({
