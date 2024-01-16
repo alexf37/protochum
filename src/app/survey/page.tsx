@@ -14,8 +14,10 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import Link from "next/link";
+import { api } from "@/trpc/react";
+import { useRouter } from "next/navigation";
 
-const formSchema = z.object({
+export const formSchema = z.object({
   name: z.string().min(1, {
     message: "Name must be at least 1 character.",
   }),
@@ -25,6 +27,8 @@ const formSchema = z.object({
 });
 
 export default function Survey() {
+  const router = useRouter();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -33,9 +37,13 @@ export default function Survey() {
     },
   });
 
+  const { data, isLoading, isSuccess, isError, error } =
+    api.survey.getQuestionByNumber.useQuery(1);
+
   function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    console.log(values);
+    if (isSuccess && data) {
+      router.push(`/survey/${data.id}`);
+    }
   }
 
   return (
@@ -85,7 +93,7 @@ export default function Survey() {
             <Link href={"/"} passHref>
               <Button variant="outline">Back</Button>
             </Link>
-            <Button>Start</Button>
+            <Button disabled={isLoading || isError}>Start</Button>
           </div>
         </form>
       </Form>
