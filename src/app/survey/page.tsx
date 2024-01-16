@@ -16,6 +16,8 @@ import { z } from "zod";
 import Link from "next/link";
 import { api } from "@/trpc/react";
 import { useRouter } from "next/navigation";
+import { useContext } from "react";
+import { SurveyContext } from "./layout";
 
 export const formSchema = z.object({
   name: z.string().min(1, {
@@ -28,6 +30,8 @@ export const formSchema = z.object({
 
 export default function Survey() {
   const router = useRouter();
+
+  const surveyCtx = useContext(SurveyContext);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -42,6 +46,9 @@ export default function Survey() {
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     if (isSuccess && data) {
+      //this could break if the user navigates away from the page
+      // or if for some reason the proper setters arent set on the context provider
+      surveyCtx.setEmail(values.email);
       router.push(`/survey/${data.id}`);
     }
   }
@@ -90,9 +97,9 @@ export default function Survey() {
             />
           </div>
           <div className="flex justify-end gap-2 pt-2">
-            <Link href={"/"} passHref>
-              <Button variant="outline">Back</Button>
-            </Link>
+            <Button variant="outline" asChild>
+              <Link href={"/"}>Back</Link>
+            </Button>
             <Button disabled={isLoading || isError}>Start</Button>
           </div>
         </form>
