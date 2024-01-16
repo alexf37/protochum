@@ -32,6 +32,52 @@ export const surveyRouter = createTRPCRouter({
       });
       return question[0];
     }),
+  getQuestionById: publicProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        email: z.string(),
+      }),
+    )
+    .query(async ({ input, ctx }) => {
+      const question = await ctx.db.question.findUnique({
+        where: {
+          id: input.id,
+        },
+        include: {
+          answerChoices: {
+            select: {
+              id: true,
+              content: true,
+              index: true,
+              requireElaboration: true,
+            },
+            orderBy: {
+              index: "asc",
+            },
+          },
+          responses: {
+            where: {
+              user: {
+                email: input.email,
+              },
+            },
+            select: {
+              answerChoice: true,
+              textContent: true,
+            },
+            orderBy: {
+              createdAt: "desc",
+            },
+            take: 1,
+          },
+        },
+      });
+      return {
+        ...question,
+        response: question ? question.responses[0] : undefined,
+      };
+    }),
   beginSurvey: publicProcedure
     .input(
       z.object({
@@ -56,5 +102,9 @@ export const surveyRouter = createTRPCRouter({
           name: input.name,
         },
       });
+      return {
+        name: user.name,
+        email: user.email,
+      };
     }),
 });
