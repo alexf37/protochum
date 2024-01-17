@@ -1,8 +1,13 @@
 import { z } from "zod";
 
-import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
+import {
+  createTRPCRouter,
+  protectedProcedure,
+  publicProcedure,
+} from "@/server/api/trpc";
 
 export const adminRouter = createTRPCRouter({
+  //not yet used??
   addQuestionWithAnswerChoices: publicProcedure
     .input(
       z.discriminatedUnion("type", [
@@ -16,7 +21,7 @@ export const adminRouter = createTRPCRouter({
               content: z.string(),
               requireElaboration: z.boolean(),
             }),
-          )
+          ),
         }),
         z.object({
           type: z.literal("frq"),
@@ -30,7 +35,6 @@ export const adminRouter = createTRPCRouter({
           type: input.type,
           content: input.prompt,
           createdAt: new Date().toISOString(),
-          index: 1,
         },
       });
       const questionId = createdQuestion.id;
@@ -56,7 +60,35 @@ export const adminRouter = createTRPCRouter({
       });
       return {
         question: createdQuestion,
-        answerChoices
+        answerChoices,
       };
+    }),
+
+  deleteQuestionById: protectedProcedure
+    .input(z.string())
+    .mutation(async ({ ctx, input }) => {
+      const deletedQuestion = await ctx.db.question.delete({
+        where: {
+          id: input,
+        },
+        select: {
+          nextQuestionId: true,
+          previousQuestion: {
+            select: {
+              id: true,
+            },
+          },
+        },
+      });
+      if (!deletedQuestion.previousQuestion?.id) return "success";
+      await ctx.db.question.update({
+        where: {
+          id: deletedQuestion.previousQuestion?.id,
+        },
+        data: {
+          nextQuestionId: deletedQuestion.nextQuestionId,
+        },
+      });
+      return "success";
     }),
 });

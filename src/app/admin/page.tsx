@@ -1,23 +1,5 @@
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+
 import {
   Table,
   TableBody,
@@ -34,122 +16,14 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { LoginForm } from "@/components/LoginForm";
+import { AddQuestionDialog } from "./AddQuestionDialog";
 
 import { api } from "@/trpc/server";
 import React from "react";
 import { getServerAuthSession } from "@/server/auth";
 import { LogoutButton } from "@/components/LogoutButton";
 import Link from "next/link";
-
-const colours = [
-  "Red",
-  "Orange",
-  "Yellow",
-  "Green",
-  "Blue",
-  "Indigo",
-  "Violet",
-];
-
-function AddQuestionDialog({ children }: React.PropsWithChildren) {
-  return (
-    <Dialog>
-      <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle className="text-xl">Add Question</DialogTitle>
-          <DialogDescription>
-            New questions will be added to the end of the survey. Click save
-            when you're done.
-          </DialogDescription>
-        </DialogHeader>
-        <Tabs defaultValue="mcq">
-          <TabsList className="w-full">
-            <TabsTrigger className="w-full" value="mcq">
-              Multiple Choice
-            </TabsTrigger>
-            <TabsTrigger className="w-full" value="frq">
-              Free Response
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="mcq" className="space-y-2">
-            <div className="grid gap-4 py-2">
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="name" className="text-right">
-                  Prompt
-                </Label>
-                <Input
-                  id="prompt"
-                  placeholder="What's your favorite color?"
-                  className="col-span-3"
-                />
-              </div>
-              <div className="row-auto grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="option" className="text-right">
-                  Option 1
-                </Label>
-                <Input
-                  id="option"
-                  placeholder={
-                    colours[Math.floor(Math.random() * colours.length)]
-                  }
-                  className="col-span-3"
-                />
-              </div>
-
-              <div className="row-auto grid grid-cols-4 items-center gap-4">
-                <Button
-                  variant="outline"
-                  className="col-span-3 col-start-2 justify-start text-slate-400"
-                >
-                  + Add option
-                </Button>
-              </div>
-            </div>
-            <div className="row-auto grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="other" className="text-right leading-4">
-                Include "Other"
-              </Label>
-              <Select>
-                <SelectTrigger className="col-span-3">
-                  <SelectValue
-                    defaultValue={"no"}
-                    placeholder="❌ No (default)"
-                  />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="yes">✅ Yes</SelectItem>
-                  <SelectItem value="no">❌ No</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <DialogFooter className="pt-4">
-              <Button type="submit">Save Question</Button>
-            </DialogFooter>
-          </TabsContent>
-          <TabsContent value="frq">
-            <div className="grid gap-4 py-2">
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="name" className="text-right">
-                  Prompt
-                </Label>
-                <Input
-                  id="prompt"
-                  placeholder="What's your mother's maiden name?"
-                  className="col-span-3"
-                />
-              </div>
-            </div>
-            <DialogFooter className="pt-4">
-              <Button type="submit">Save Question</Button>
-            </DialogFooter>
-          </TabsContent>
-        </Tabs>
-      </DialogContent>
-    </Dialog>
-  );
-}
+import { DeleteQuestionButton } from "./DeleteQuestionButton";
 
 function LoginCard() {
   return (
@@ -228,12 +102,12 @@ export default async function Admin() {
             ) : (
               questions.map((q) => (
                 <TableRow key={q.id}>
-                  <TableCell className="font-medium">{q.index}</TableCell>
+                  <TableCell className="font-medium">{"N/A"}</TableCell>
                   <TableCell>{q.type.toLocaleUpperCase()}</TableCell>
                   <TableCell>{q.content}</TableCell>
                   <TableCell className="flex justify-end gap-2">
                     <Button>Edit</Button>
-                    <Button variant="destructive">Delete</Button>
+                    <DeleteQuestionButton questionId={q.id} />
                   </TableCell>
                 </TableRow>
               ))
