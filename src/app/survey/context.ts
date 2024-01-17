@@ -2,7 +2,7 @@ import { createContext } from "react";
 
 export type SurveyContextType = {
   currentQuestion: number;
-  setCurrentQuestion?: (index: number) => void;
+  setCurrentQuestion: (index: number) => void;
   email: string;
   setEmail: (email: string) => void;
 };

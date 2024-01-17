@@ -11,13 +11,15 @@ datasource db {
 }
 
 model Question {
-    id            String         @id @default(cuid())
-    createdAt     DateTime       @default(now())
-    index         Int
-    type          String // MCQ or FRQ
-    content       String
-    responses     Response[]
-    answerChoices AnswerChoice[]
+    id               String         @id @default(cuid())
+    createdAt        DateTime       @default(now())
+    nextQuestion     Question?      @relation("NextQuestion", fields: [nextQuestionId], references: [id])
+    nextQuestionId   String?        @unique
+    type             String // MCQ or FRQ
+    content          String
+    responses        Response[]
+    answerChoices    AnswerChoice[]
+    previousQuestion Question?      @relation("NextQuestion")
 }
 
 model AnswerChoice {

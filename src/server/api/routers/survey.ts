@@ -7,31 +7,18 @@ import {
 } from "@/server/api/trpc";
 
 export const surveyRouter = createTRPCRouter({
-  example: publicProcedure
-    .input(z.object({ text: z.string() }))
-    .query(({ input }) => {
-      return {
-        greeting: `Hello ${input.text}`,
-      };
-    }),
   getQuestions: protectedProcedure.query(async ({ ctx }) => {
     const questions = await ctx.db.question.findMany();
     return questions;
   }),
-  getQuestionByNumber: publicProcedure
-    .input(z.number())
-    .query(async ({ input, ctx }) => {
-      const question = await ctx.db.question.findMany({
-        where: {
-          index: input,
-        },
-        orderBy: {
-          createdAt: "desc",
-        },
-        take: 1,
-      });
-      return question[0];
-    }),
+  getFirstQuestion: publicProcedure.query(async ({ ctx }) => {
+    const question = await ctx.db.question.findFirst({
+      where: {
+        previousQuestion: null,
+      },
+    });
+    return question;
+  }),
   getQuestionById: publicProcedure
     .input(
       z.object({
@@ -70,6 +57,11 @@ export const surveyRouter = createTRPCRouter({
               createdAt: "desc",
             },
             take: 1,
+          },
+          nextQuestion: {
+            select: {
+              id: true,
+            },
           },
         },
       });

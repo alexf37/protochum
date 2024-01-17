@@ -42,13 +42,14 @@ export default function Survey() {
   });
 
   const { data, isLoading, isSuccess, isError, error } =
-    api.survey.getQuestionByNumber.useQuery(1);
+    api.survey.getFirstQuestion.useQuery();
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     if (isSuccess && data) {
       //this could break if the user navigates away from the page
       // or if for some reason the proper setters arent set on the context provider
       surveyCtx.setEmail(values.email);
+      //surveyCtx.setCurrentQuestion(1);
       router.push(`/survey/${data.id}`);
     }
   }
